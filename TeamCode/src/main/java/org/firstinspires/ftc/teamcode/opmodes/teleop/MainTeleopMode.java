@@ -16,5 +16,6 @@ public class MainTeleopMode extends OpMode {
     @Override
     public void loop() {
         drive_base.handleControllerInput(gamepad1);
+        drive_base.updateTelemetry();
     }
 }

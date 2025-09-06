@@ -1,7 +1,14 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.DriveConstants.FieldOriented;
+import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.DriveConstants.reverseDirections;
+
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -11,17 +18,26 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+
 public class DriveSubsystem {
     private static IMU gyro;
     static DcMotor left_front_motor;
     static DcMotor left_back_motor;
     static DcMotor right_front_motor;
     static DcMotor right_back_motor;
+
+    @Config
+public static class DriveConstants {
     static Boolean reverseDirections = false;
     static Boolean FieldOriented = false;
 
 
+}
+
+
+
     public static void initialize(@NonNull HardwareMap hwMap) {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         left_front_motor = hwMap.get(DcMotor.class, "left_front_motor");
         right_front_motor = hwMap.get(DcMotor.class, "right_front_motor");
         left_back_motor = hwMap.get(DcMotor.class, "left_back_motor");
@@ -80,6 +96,15 @@ public class DriveSubsystem {
             right_back_motor.setPower(backRightPower);
 
         }
+    }
+
+    public void updateTelemetry() {
+        telemetry.addData("Heading (deg)", getHeading());
+        telemetry.addData("Left Front Power", left_front_motor.getPower());
+        telemetry.addData("Left Back Power", left_back_motor.getPower());
+        telemetry.addData("Right Front Power", right_front_motor.getPower());
+        telemetry.addData("Right Back Power", right_back_motor.getPower());
+        telemetry.update();
     }
 
     public static double getHeading() {
