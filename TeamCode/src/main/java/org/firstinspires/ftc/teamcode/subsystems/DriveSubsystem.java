@@ -4,7 +4,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.DriveConstants.FieldOriented;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.DriveConstants.reverseDirections;
 
-import androidx.annotation.NonNull;
+//import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -26,7 +26,7 @@ public class DriveSubsystem {
     static DcMotor right_front_motor;
     static DcMotor right_back_motor;
 
-    @Config
+//    @Config
 public static class DriveConstants {
     static Boolean reverseDirections = false;
     static Boolean FieldOriented = false;
@@ -36,7 +36,7 @@ public static class DriveConstants {
 
 
 
-    public static void initialize(@NonNull HardwareMap hwMap) {
+    public static void initialize(HardwareMap hwMap) {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         left_front_motor = hwMap.get(DcMotor.class, "left_front_motor");
         right_front_motor = hwMap.get(DcMotor.class, "right_front_motor");
