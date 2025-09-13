@@ -6,9 +6,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.DriveCons
 
 //import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -26,18 +24,16 @@ public class DriveSubsystem {
     static DcMotor right_front_motor;
     static DcMotor right_back_motor;
 
-//    @Config
+    @Configurable
 public static class DriveConstants {
     static Boolean reverseDirections = false;
     static Boolean FieldOriented = false;
-
-
+    static double SpeedModifier = 1.0;
 }
 
 
 
     public static void initialize(HardwareMap hwMap) {
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         left_front_motor = hwMap.get(DcMotor.class, "left_front_motor");
         right_front_motor = hwMap.get(DcMotor.class, "right_front_motor");
         left_back_motor = hwMap.get(DcMotor.class, "left_back_motor");
@@ -70,10 +66,10 @@ public static class DriveConstants {
 
         if (!FieldOriented) {
             //robot-oriented
-            double left_front_power = (drive + strafe + twist) / denominator;
-            double right_front_power = (drive - strafe - twist) / denominator;
-            double left_back_power = (drive - strafe + twist) / denominator;
-            double right_back_power = (drive + strafe - twist) / denominator;
+            double left_front_power = DriveConstants.SpeedModifier * (drive + strafe + twist) / denominator;
+            double right_front_power = DriveConstants.SpeedModifier * (drive - strafe - twist) / denominator;
+            double left_back_power = DriveConstants.SpeedModifier * (drive - strafe + twist) / denominator;
+            double right_back_power = DriveConstants.SpeedModifier * (drive + strafe - twist) / denominator;
 
             left_front_motor.setPower(left_front_power);
             right_front_motor.setPower(right_front_power);
@@ -85,10 +81,10 @@ public static class DriveConstants {
             // Rotate the movement direction counter to the bot's rotation
             double rotX = drive * Math.cos(-botHeading) - strafe * Math.sin(-botHeading);
             double rotY = drive * Math.sin(-botHeading) + strafe * Math.cos(-botHeading);
-            double frontLeftPower = (rotY + rotX + twist) / denominator;
-            double backLeftPower = (rotY - rotX + twist) / denominator;
-            double frontRightPower = (rotY - rotX - twist) / denominator;
-            double backRightPower = (rotY + rotX - twist) / denominator;
+            double frontLeftPower = DriveConstants.SpeedModifier * (rotY + rotX + twist) / denominator;
+            double backLeftPower = DriveConstants.SpeedModifier * (rotY - rotX + twist) / denominator;
+            double frontRightPower = DriveConstants.SpeedModifier * (rotY - rotX - twist) / denominator;
+            double backRightPower = DriveConstants.SpeedModifier * (rotY + rotX - twist) / denominator;
             // set the power of the motors
             left_front_motor.setPower(frontLeftPower);
             left_back_motor.setPower(backLeftPower);
@@ -99,12 +95,6 @@ public static class DriveConstants {
     }
 
     public void updateTelemetry() {
-        telemetry.addData("Heading (deg)", getHeading());
-        telemetry.addData("Left Front Power", left_front_motor.getPower());
-        telemetry.addData("Left Back Power", left_back_motor.getPower());
-        telemetry.addData("Right Front Power", right_front_motor.getPower());
-        telemetry.addData("Right Back Power", right_back_motor.getPower());
-        telemetry.update();
     }
 
     public static double getHeading() {
