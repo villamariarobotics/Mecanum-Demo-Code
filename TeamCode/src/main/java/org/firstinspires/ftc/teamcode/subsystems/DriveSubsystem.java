@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.DriveConstants.FieldOriented;
 import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.DriveConstants.reverseDirections;
 
@@ -9,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem.DriveCons
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -35,10 +35,10 @@ DriveSubsystem {
 
 
     public static void initialize(HardwareMap hwMap) {
-        left_front_motor = hwMap.get(DcMotor.class, "left_front_motor");
-        right_front_motor = hwMap.get(DcMotor.class, "right_front_motor");
-        left_back_motor = hwMap.get(DcMotor.class, "left_back_motor");
-        right_back_motor = hwMap.get(DcMotor.class, "right_back_motor");
+        left_front_motor = hwMap.get(DcMotorEx.class, "left_front_motor");
+        right_front_motor = hwMap.get(DcMotorEx.class, "right_front_motor");
+        left_back_motor = hwMap.get(DcMotorEx.class, "left_back_motor");
+        right_back_motor = hwMap.get(DcMotorEx.class, "right_back_motor");
         gyro = hwMap.get(IMU.class, "gyro");
         gyro.initialize(
                 new IMU.Parameters(
@@ -48,6 +48,19 @@ DriveSubsystem {
                         )
                 )
         );
+        left_front_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        left_back_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        right_front_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        right_back_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // disables the default velocity control
+        // this does NOT disable the encoder from counting,
+        // but lets us simply send raw motor power.
+        left_front_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        left_back_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        right_front_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        right_back_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
         if (!reverseDirections) {
             right_front_motor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -93,9 +106,6 @@ DriveSubsystem {
             right_back_motor.setPower(backRightPower);
 
         }
-    }
-
-    public void updateTelemetry() {
     }
 
     public static double getHeading() {
